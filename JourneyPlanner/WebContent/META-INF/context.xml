@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+  <!-- Specify a JDBC datasource -->
+  <Resource name="jdbc/ptvdb" auth="Container" type="javax.sql.DataSource"
+    username="root" password="123456" driverClassName="com.mysql.jdbc.Driver"
+    url="jdbc:mysql://localhost/ptvdb" maxActive="10" maxIdle="4"
+    testOnBorrow="true" validationQuery="SELECT 1" />
+</Context>

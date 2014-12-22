@@ -1,0 +1,138 @@
+/**
+ * layout
+ * ===
+ */
+
+/*
+ * "fullscreen"
+ */
+html,
+body
+{
+  height: 100%;
+  font-family: sans-serif;
+}
+
+/*
+ * interface is on the right and 200px wide
+ * visualisation takes up the rest of the space on the left
+ */
+
+#map-canvas
+{
+  display: inline-block;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 250px;
+}
+
+#side
+{
+  display: inline-block;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: 240px; /* reduced to fit borders and padding */
+  right: 0px;
+  padding: 0px 4px;
+  border-width: 1px;
+}
+
+/*
+ * hide some google maps controls
+ * magic numbers at the moment
+ */
+html > body > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2),
+html > body > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3),
+html > body > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(6),
+html > body > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(10)
+{
+  display: none;
+}
+
+#side p
+{
+  margin: 4px 0px;
+}
+
+#from,
+#to
+{
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/**
+ * decoration
+ * ===
+ */
+
+.ui-widget
+{
+  font-size: 100%;
+}
+
+.ui-autocomplete,
+.ui-accordion-content
+{
+  font-size: 80%;
+}
+
+#side
+{
+  border-style: inset;
+  border-color: #F0F0F0;
+  background: #F0F0F0;
+  overflow: auto;
+}
+
+#side label
+{
+  vertical-align: middle;
+}
+
+h2
+{
+  font-weight: bold;
+  text-decoration: underline;
+  text-align: center;
+  padding: 4px 0px;
+}
+
+#status
+{
+  padding: 4px;
+  display: none;
+}
+
+#from,
+#to
+{
+  background: #FFE0E0;
+  border: 2px inset #FFE0E0;
+}
+#from.valid,
+#to.valid
+{
+  background: #E0FFE0;
+  border: 2px inset #E0FFE0;
+}
+
+#results input[type="checkbox"]
+{
+  width: 0.8em;
+  height: 0.8em;
+}
+
+li
+{
+  list-style: initial;
+}
+
+#date,
+#time
+{
+	border: 2px inset #FFE0E0;
+}
