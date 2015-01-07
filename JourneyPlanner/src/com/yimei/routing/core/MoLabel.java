@@ -2,6 +2,7 @@ package com.yimei.routing.core;
 
 import java.util.List;
 
+import com.yimei.routing.query.QueryTime;
 import com.yimei.util.TimeTransformer;
 
 /***

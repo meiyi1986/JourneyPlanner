@@ -1,6 +1,6 @@
 package com.yimei.routing.raptor;
 
-import com.yimei.routing.core.QueryTime;
+import com.yimei.routing.query.QueryTime;
 
 public class DepartureAtStop implements Comparable<DepartureAtStop> {
 

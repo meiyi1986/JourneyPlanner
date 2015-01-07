@@ -51,7 +51,7 @@ public class JsonReader {
 	private static class DummyAuthenticator extends Authenticator {
 		public PasswordAuthentication getPasswordAuthentication() {
 			return new PasswordAuthentication(
-					"e04499", "Godreigns4ever".toCharArray()
+					"e04499", "Jesuslives4ever".toCharArray()
 				);
 		}
 	}

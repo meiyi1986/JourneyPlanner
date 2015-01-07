@@ -2,14 +2,10 @@ package au.com.jakebarnes.JourneyPlanner;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.mapdb.Fun.Tuple2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,19 +15,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.conveyal.gtfs.GTFSFeed;
 import com.conveyal.gtfs.model.Stop;
-import com.yimei.routing.core.FootPath;
-import com.yimei.routing.core.Journey;
-import com.yimei.routing.core.Query;
-import com.yimei.routing.core.QueryTime;
-import com.yimei.routing.csa.Csa;
-import com.yimei.routing.csa.CsaModel;
+import com.yimei.routing.core.Location;
+import com.yimei.routing.journey.Journey;
+import com.yimei.routing.query.LocationQuery;
+import com.yimei.routing.query.Query;
+import com.yimei.routing.query.QueryTime;
 import com.yimei.routing.raptor.Raptor;
 import com.yimei.routing.raptor.RaptorModel;
 import com.yimei.sql.GtfsJDBC;
 import com.yimei.sql.JDBC;
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 @Controller
 @RequestMapping("/api")
@@ -96,9 +89,9 @@ public class Api
 		return json;
 	}
 	
-	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	@RequestMapping(value = "/journeyBetweenStops", method = RequestMethod.GET)
 	@ResponseBody
-	public String search(@RequestParam String fromStopId, @RequestParam String toStopId, @RequestParam String utc, 
+	public String journeyBetweenStops(@RequestParam String fromStopId, @RequestParam String toStopId, @RequestParam String utc, 
 			ModelMap model) throws Exception {
 		// transform utc to QueryTime
 		QueryTime qt = QueryTime.fromUtc(utc);
@@ -132,13 +125,57 @@ public class Api
 		return json;
 	}
 	
+	@RequestMapping(value = "/journeyBetweenLocations", method = RequestMethod.GET)
+	@ResponseBody
+	public String journeyBetweenLocations(@RequestParam String fromLat, @RequestParam String fromLon, @RequestParam String fromAddress,
+			@RequestParam String toLat, @RequestParam String toLon, @RequestParam String toAddress, @RequestParam String utc, 
+			ModelMap model) throws Exception {
+		// transform utc to QueryTime
+		QueryTime qt = QueryTime.fromUtc(utc);
+		
+		double fromLatDouble = Double.parseDouble(fromLat);
+		double fromLonDouble = Double.parseDouble(fromLon);
+		double toLatDouble = Double.parseDouble(toLat);
+		double toLonDouble = Double.parseDouble(toLon);
+		
+		// create the location query
+		Location fromLoc = new Location(fromLatDouble, fromLonDouble, fromAddress);
+		Location toLoc = new Location(toLatDouble, toLonDouble, toAddress);
+		LocationQuery locQuery = new LocationQuery(fromLoc, toLoc, qt);
+		
+		// load the database
+		String jsonDir = "data/JSON/" + database;
+		File catalinaBase = new File( System.getProperty( "catalina.base" ) ).getAbsoluteFile();
+		File modelFile = new File( catalinaBase, jsonDir + "/RaptorModel.json" );
+		
+		RaptorModel raptorModel = RaptorModel.fromJSON(modelFile);
+		
+		Raptor raptor = new Raptor(raptorModel);
+		Journey journey = raptor.earliestArrivalJourney(locQuery);
+		journey.getShowInfo(locQuery, database, raptorModel);
+		
+		journey.showMe();
+
+//		CsaModel csaModel = CsaModel.fromJSON(jsonDir + "/CsaModel.json");
+//		Csa csa = new Csa(csaModel);		
+//		Journey journey = csa.searchEarliestArrivalJourney(query);
+		
+		// transfer to json
+		Gson gson = new Gson();
+		String json = gson.toJson(journey);
+		
+//		System.out.println(json);
+		
+		return json;
+	}
+	
 	public static void main(String[] args) throws Exception {
 		String fromStopId = "101578";
 		String toStopId = "3017";
 		String utc = "2014-12-03T05:33:12.000Z";
 		
 		Api api = new Api();
-		String journey = api.search(fromStopId, toStopId, utc, new ModelMap());
+		String journey = api.journeyBetweenStops(fromStopId, toStopId, utc, new ModelMap());
 		
 		
 	}

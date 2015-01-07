@@ -32,7 +32,7 @@ public class RaptorStop {
 	
 	public RaptorStop(String id, double lat, double lon) {
 		this.id = id;
-		this.loc = new Location(lat, lon);
+		this.loc = new Location(lat, lon, null);
 		this.sameNameIds = new ArrayList<String>();
 		this.routeIdx = Maps.newHashMap();
 	}
@@ -63,6 +63,14 @@ public class RaptorStop {
 	
 	public List<Integer> getIdxOfRoute(String routeId) {
 		return routeIdx.get(routeId);
+	}
+	
+	public int getFirstIdxOfRoute(String routeId) {
+		return routeIdx.get(routeId).get(0);
+	}
+	
+	public int getLastIdxOfRoute(String routeId) {
+		return routeIdx.get(routeId).get(routeIdx.get(routeId).size()-1);
 	}
 	
 	public void addRoute(String routeId, List<Integer> idx) {

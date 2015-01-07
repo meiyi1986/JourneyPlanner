@@ -84,4 +84,28 @@ public class Calendar extends Entity {
 		
 		return nextDay;
 	}
+    
+    public static String prevWeekDay(String day) { // get the next day of the week
+		String prevDay;
+		switch (day) {
+        case "Monday":  prevDay = "Sunday";
+                 break;
+        case "Tuesday":  prevDay = "Monday";
+                 break;
+        case "Wednesday":  prevDay = "Tuesday";
+                 break;
+        case "Thursday":  prevDay = "Wednesday";
+                 break;
+        case "Friday":  prevDay = "Thursday";
+                 break;
+        case "Saturday":  prevDay = "Friday";
+                 break;
+        case "Sunday":  prevDay = "Saturday";
+                 break;
+        default: prevDay = "Invalid day";
+                 break;
+		}
+		
+		return prevDay;
+	}
 }

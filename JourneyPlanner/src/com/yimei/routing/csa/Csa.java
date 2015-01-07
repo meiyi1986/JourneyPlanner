@@ -15,17 +15,17 @@ import com.google.common.collect.Maps;
 import com.yimei.modelbuilder.ModelBuilder;
 import com.yimei.routing.core.Criteria;
 import com.yimei.routing.core.FootPath;
-import com.yimei.routing.core.Journey;
-import com.yimei.routing.core.JourneyEvent;
 import com.yimei.routing.core.Label;
 import com.yimei.routing.core.LabelBag;
 import com.yimei.routing.core.MoLabel;
 import com.yimei.routing.core.MoLabelBag;
-import com.yimei.routing.core.QueryTime;
 import com.yimei.routing.core.ObjectiveValues;
-import com.yimei.routing.core.Query;
 import com.yimei.routing.core.RoutingTrip;
-import com.yimei.routing.core.SequentialTargetQuery;
+import com.yimei.routing.journey.Journey;
+import com.yimei.routing.journey.JourneyEvent;
+import com.yimei.routing.query.Query;
+import com.yimei.routing.query.QueryTime;
+import com.yimei.routing.query.SequentialTargetQuery;
 
 /***
  * The Connection Scanning Algorithm, based on the paper:

@@ -3,6 +3,8 @@ package com.yimei.routing.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.yimei.routing.query.QueryTime;
+
 /**
  * The label bag, including the set of nondominated labels, and the lower bound of each objective value
  * @author e04499

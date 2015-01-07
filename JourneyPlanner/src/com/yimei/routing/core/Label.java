@@ -1,5 +1,6 @@
 package com.yimei.routing.core;
 
+import com.yimei.routing.query.QueryTime;
 import com.yimei.routing.raptor.DepartureAtStop;
 import com.yimei.util.TimeTransformer;
 
@@ -145,6 +146,10 @@ public class Label implements Comparable<Label>
 	
 	public boolean arrivesEarlierThan(Label cmpLabel) {
 		return this.arrivalTime.earlierThan(cmpLabel.getArrivalTime());
+	}
+	
+	public boolean departsLaterThan(Label cmpLabel) {
+		return this.departureTime.laterThan(cmpLabel.getDepartureTime());
 	}
 	
 	public int compareTo(Label cmpLabel) {

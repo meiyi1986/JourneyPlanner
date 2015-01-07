@@ -9,6 +9,7 @@
   
   <build>
     <sourceDirectory>src</sourceDirectory>
+    <pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -27,6 +28,7 @@
         </configuration>
       </plugin>
     </plugins>
+    </pluginManagement>
   </build>
   <properties>
     <spring.version>3.2.5.RELEASE</spring.version>
@@ -75,5 +77,10 @@
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.6</version>
     </dependency>
+    <dependency>
+      <groupId>de.javakaffee</groupId>
+      <artifactId>kryo-serializers</artifactId>
+    <version>0.27</version>
+</dependency>
   </dependencies>
 </project>

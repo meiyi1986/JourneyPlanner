@@ -1,5 +1,7 @@
 package com.yimei.routing.core;
 
+import com.yimei.routing.query.QueryTime;
+
 /***
  * The objective values of the journey planning.
  * @author e04499

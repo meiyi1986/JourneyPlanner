@@ -25,6 +25,38 @@ var journeyList; // the journey list
 // stop and route information
 var stopInfo = [], routeInfo = [];
 
+// the locations on the map
+var locations = [];
+
+var geocoder = new google.maps.Geocoder();
+
+function placeMarker(location) {
+    var marker = new google.maps.Marker({
+        position: location, 
+        map: map
+    });
+}
+
+function LocationInfo(pos) {
+	geocoder.geocode({
+		latLng: pos
+	}, 
+	function(responses) {
+		if (responses && responses.length > 0) {
+			var loc = {
+					lat: pos.lat(),
+					lon: pos.lng(),
+					address: responses[0].formatted_address
+			};
+			
+//			document.getElementById("output").innerHTML = loc.lat + ", " + loc.lon + ", " + loc.address;
+			locations.push(loc);
+	    } else {
+	    	alert("Cannot determine address at this location.");
+	    }
+	});
+}
+
 // init
 function initialize()
 {
@@ -49,6 +81,12 @@ function initialize()
 
 	// create map
 	map = new google.maps.Map($('#map-canvas')[0], mapOptions);
+	
+	google.maps.event.addListener(map, 'click', function(event) {
+		placeMarker(event.latLng);
+		LocationInfo(event.latLng);
+		
+	});
 
 	// layer controls
 	cb1 = new CheckboxControl('Stops', true, function(v) {
@@ -130,6 +168,7 @@ function initialize()
 
 $(document).ready(initialize);
 
+
 function loadStopInfo(data) {
 	$.each(data, function(key, item) {
 		document.getElementById("output").innerHTML = item.stop_id + ", " + item.stop_name + "<br>";
@@ -160,6 +199,24 @@ function search()
 {
 //	document.getElementById("output").innerHTML = from + ", " + to;
 	
+	if (locations.length > 0) {
+//		for (i = 0; i < locations.length; i++) {
+//			document.getElementById("output").innerHTML += locations[i].address + "<br>";
+//		}
+		
+		if (locations.length != 2) {
+			alert("Wrong number of locations on the map! Please first click on your starting point, and then click on your destination.")
+		}
+		
+		searchForLocations();
+	}
+	else {
+		searchForStops();
+	}
+	
+}
+
+function searchForStops() {
 	if (from == to) {
 		alert("The origin and destination are the same!");
 		return;
@@ -215,8 +272,66 @@ function search()
 	//  $('#search').button("option", "disabled", true);
 //	document.getElementById("output").innerHTML = "start ajax" + "<br>";
 	$.ajax({ 
-		url : 'api/search', 
+		url : 'api/journeyBetweenStops', 
 		data : {fromStopId : from, toStopId : to, utc : utc}, 
+		dataType : 'json', 
+		success : showJourneys,
+		timeout : 10000
+	})
+	.fail(function(a, b, c) {
+		api_status("Couldn't load results.", true);
+	});
+}
+
+function searchForLocations() {
+	
+	// get the date and time in ISO8601 UTC format
+	var dateString = document.getElementById("date").value;
+	var timeString = document.getElementById("time").value;
+	
+	if (dateString == ""){ // no date entered, get the current date
+		dateString = new Date();
+		var dd = dateString.getDate();
+		var mm = dateString.getMonth()+1; //January is 0!
+		var yyyy = dateString.getFullYear();
+
+		if(dd<10) {
+		    dd='0'+dd;
+		}
+
+		if(mm<10) {
+		    mm='0'+mm;
+		} 
+
+		dateString = yyyy+'-'+mm+'-'+dd;
+	}
+	
+	if (timeString == ""){ // no time entered, get the current time
+	    var currDate = new Date();
+		var hh = currDate.getHours();
+		var mm = currDate.getMinutes();
+		var ss = currDate.getSeconds();
+		timeString = hh + ":" + mm + ":" + ss;
+	}
+	
+	var dtString = dateString + " " + timeString;
+	utc = new Date(dtString);
+	utc = toISOString(utc);
+
+//	document.getElementById("output").innerHTML = "from " + locations[0].toString() + ", to " + locations[1].toString() + " at " + utc + "<br>";
+
+	//  $('#search').button("option", "disabled", true);
+//	document.getElementById("output").innerHTML = "start ajax" + "<br>";
+	$.ajax({ 
+		url : 'api/journeyBetweenLocations', 
+		data : {
+			fromLat : locations[0].lat,
+			fromLon : locations[0].lon,
+			fromAddress : locations[0].address,
+			toLat : locations[1].lat,
+			toLon : locations[1].lon,
+			toAddress : locations[1].address,
+			utc : utc}, 
 		dataType : 'json', 
 		success : showJourneys,
 		timeout : 10000
