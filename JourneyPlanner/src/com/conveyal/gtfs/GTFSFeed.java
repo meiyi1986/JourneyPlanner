@@ -267,4 +267,50 @@ public class GTFSFeed {
 		
 		return routes;
 	}
+    public void transfersToJSON(String dirStr) {
+		// set directory
+		File directory = new File(dirStr);
+		if (!directory.exists()) {
+			try{
+				directory.mkdir();
+		    } catch(SecurityException se){
+			   //handle it
+			}        
+		}
+		
+		Gson gson = new Gson();
+		String json = gson.toJsonTree(this.transfers).toString();
+	      System.out.println(json);
+			
+		try {
+			//write converted json data to a file named "file.json"
+			FileWriter writer = new FileWriter(dirStr + "/GTFSTransfers.json");
+			writer.write(json);
+			writer.close();
+		} catch (IOException e) {
+	  		e.printStackTrace();
+	  	}
+	}
+    
+    public static Map<String, Transfer>transfersFromJSON(String jsonFile) {
+    	Map<String, Transfer> transfers = Maps.newHashMap();
+		
+		Gson gson = new Gson();
+		try {
+	 
+			BufferedReader br = new BufferedReader(
+				new FileReader(jsonFile));
+	 
+			//convert the json string back to object
+			Type typeOfQueryList = new TypeToken<Map<String, Transfer>>(){}.getType();
+			transfers = gson.fromJson(br, typeOfQueryList);
+	 
+//			System.out.println(model);
+	 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return transfers;
+	}
 }

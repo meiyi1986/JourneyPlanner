@@ -23,6 +23,7 @@ public class GTFSMain {
         
         feed.stopToJSON("data/JSON/Adelaide");
         feed.routeToJSON("data/JSON/Adelaide");
+        feed.transfersToJSON("data/JSON/Adelaide");  
 //        feed.findPatterns();
 //        feed.db.close();
 //        
