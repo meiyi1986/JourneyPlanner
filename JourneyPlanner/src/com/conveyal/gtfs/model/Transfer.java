@@ -24,7 +24,7 @@ public class Transfer extends Entity {
 
     @Override
     public String getKey() {
-        return null;
+        return from_stop_id+" "+to_stop_id;
     }
 
     public static class Factory extends Entity.Factory<Transfer> {
