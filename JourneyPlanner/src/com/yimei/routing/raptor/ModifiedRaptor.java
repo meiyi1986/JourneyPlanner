@@ -1,19 +1,24 @@
 package com.yimei.routing.raptor;
 
 import java.io.File;
-import java.io.PrintWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
+import org.json.JSONException;
 import org.mapdb.Fun.Tuple2;
 
 import com.conveyal.gtfs.GTFSFeed;
 import com.conveyal.gtfs.model.Calendar;
 import com.conveyal.gtfs.model.Transfer;
+import com.conveyal.gtfs.*;
 import com.google.common.collect.Maps;
 import com.yimei.modelbuilder.ModelBuilder;
 import com.yimei.routing.core.FootPath;
+import com.yimei.routing.core.Journey;
+import com.yimei.routing.core.JourneyEvent;
 import com.yimei.routing.core.Label;
 import com.yimei.routing.core.Location;
 import com.yimei.routing.journey.Journey;
@@ -410,6 +415,13 @@ public class ModifiedRaptor{
 	public Map<String, Label> getStopLabels(String from_stop_id, String to_stop_id )
 	{
 		Location from = model.getStop(from_stop_id).getLocation();
+		try{
+			 model.getStop(to_stop_id).getLocation();
+		}
+		catch(Exception e)
+		{
+			return null;
+		}
 		Location to =  model.getStop(to_stop_id).getLocation();
 		String day = "Wednesday";
 		int now = 59870;
@@ -444,8 +456,52 @@ public class ModifiedRaptor{
 		return eaStopLabels.get(sid).getNumOfTrips();
 	}
 	
-	public static void main(String[] args) {
-	
+	public static void main(String[] args) throws JSONException, IOException {
+
+/*step 1~5 may take up to 20 mins to finish*/
+ /*  skip 1~5 if the  new csv has been generated */
+
+//1. set output file, here is pointing to "test.csv"  in home directory 
+           File out = new File(System.getProperty("user.home") + "/test.csv");    
+           if (!out.exists()){out.createNewFile() ;}   
+           FileOutputStream fos = new FileOutputStream(out);
+         
+//2. load the csv    
+		RaptorCSV raptorcsv = new RaptorCSV("data/stops_in_sa1.csv");
+		//convert csv to  "json object in arraylist"
+		raptorcsv.csvToJSON();
+//3. get id of  from_stop
+		int i = raptorcsv.getIndexOf("stop_name","Adelaide Railway Station");
+		String from_stop = raptorcsv.idx(i).get("stop_id").toString();
+    
+//4. set from stop 
+		raptorcsv.setfromStop(from_stop);
+//5. calculate the trip time and number of trips.
+// these two would be add-in to the last column of the csv file.
+		raptorcsv.addTripTime(fos);
+		fos.close();
+		
+/* sorting */
+// decide the output file, here is point to sorted.csv in home directory
+		File out2 = new File(System.getProperty("user.home") + "/sorted.csv");
+		if (!out2.exists()){out2.createNewFile() ;}
+		FileOutputStream fos2 = new FileOutputStream(out2);
+		
+// load the csv
+		RaptorCSV raptorcsv2 = new RaptorCSV(System.getProperty("user.home") + "/test.csv");
+		raptorcsv2.csvToJSON();
+		
+/*can sort by one, or more keys*/
+//this is sort by one key
+		raptorcsv2.sort("travelTime");
+		
+//this is sort by 3 keys~
+		String keys[] = {"travelTime","gid","numTrips"};
+		raptorcsv2.sort(keys);
+		raptorcsv2.csvWrite(fos2);
+		fos2.close();
+
+/*
 		File file = new File("data/JSON/Adelaide/RaptorModel.json");
 		RaptorModel model = RaptorModel.fromJSON(file);
 		//obtain station pairs from  GTFSTransfers
@@ -459,7 +515,8 @@ public class ModifiedRaptor{
 			System.out.println("from: "+from_stop_id+" To:"+ to_stop_id);
 			System.out.println("Total Travel Time:"+ TimeTransformer.IntegerToString(raptor.getTravelTime(stopLabels)));
 			System.out.println("Number of Stops:"+raptor.getNumofTrips(stopLabels));
-			
-		}
+		
+		}*/
 	}
 }
+

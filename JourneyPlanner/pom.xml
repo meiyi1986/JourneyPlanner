@@ -82,5 +82,9 @@
       <artifactId>kryo-serializers</artifactId>
     <version>0.27</version>
 </dependency>
+      <groupId>com.opencsv</groupId> 
+      <artifactId>opencsv</artifactId> 
+      <version>3.1</version> 
+    </dependency>
   </dependencies>
 </project>
